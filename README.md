@@ -4,7 +4,7 @@
 ---
 
 ## Loom Walkthrough
-🎥 [Watch the walkthrough](#) ← replace with your Loom link
+🎥 [Watch the walkthrough](#) https://www.loom.com/share/eab2fc14455d44b19102589710d49bfb
 
 ---
 
