@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OrthoNow — Orthopaedic Care Across Bengaluru, Hyderabad & Chennai</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page-type="homepage">
+
+<nav class="nav">
+  <a class="brand" href="index.html">OrthoNow</a>
+  <div>
+    <a href="blog.html">Blog</a>
+    <a href="guide.html">Patient Guide</a>
+    <a href="booking.html">Book Now</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Orthopaedic care, without the wait.</h1>
+  <p>9 clinics across Bengaluru, Hyderabad and Chennai. Same-week appointments for sports injuries, joint pain, and spine care.</p>
+  <div style="margin-top:20px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap">
+    <a href="booking.html" class="btn btn-primary">Book a Consultation</a>
+
+    <!-- CALL NOW — homepage instance.
+         data-track="call_now" is picked up by tracking.js event
+         delegation — no per-page JS needed. page_type identifies
+         this as a homepage call vs a clinic-page call in GA4. -->
+    <a href="tel:+919999999999"
+       class="btn btn-outline"
+       data-track="call_now"
+       data-page-type="homepage"
+       data-phone="+919999999999">
+      📞 Call Now
+    </a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- All 9 clinic pages linked from the homepage -->
+  <h2 style="font-size:17px; margin-bottom:14px">Our clinics</h2>
+
+  <div style="margin-bottom:8px; font-size:13px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px">Bengaluru</div>
+  <div class="grid" style="margin-bottom:18px">
+    <div class="card"><a href="clinic-blr-indiranagar.html" style="color:var(--accent); text-decoration:none; font-weight:600">Indiranagar</a><p style="font-size:13px; color:var(--muted); margin-top:4px">12th Main Road, Bengaluru</p></div>
+    <div class="card"><a href="clinic-blr-whitefield.html" style="color:var(--accent); text-decoration:none; font-weight:600">Whitefield</a><p style="font-size:13px; color:var(--muted); margin-top:4px">ITPL Main Road, Bengaluru</p></div>
+    <div class="card"><a href="clinic-blr-jayanagar.html" style="color:var(--accent); text-decoration:none; font-weight:600">Jayanagar</a><p style="font-size:13px; color:var(--muted); margin-top:4px">4th Block, Bengaluru</p></div>
+  </div>
+
+  <div style="margin-bottom:8px; font-size:13px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px">Hyderabad</div>
+  <div class="grid" style="margin-bottom:18px">
+    <div class="card"><a href="clinic-hyd-banjarahills.html" style="color:var(--accent); text-decoration:none; font-weight:600">Banjara Hills</a><p style="font-size:13px; color:var(--muted); margin-top:4px">Road No. 12, Hyderabad</p></div>
+    <div class="card"><a href="clinic-hyd-gachibowli.html" style="color:var(--accent); text-decoration:none; font-weight:600">Gachibowli</a><p style="font-size:13px; color:var(--muted); margin-top:4px">Financial District, Hyderabad</p></div>
+    <div class="card"><a href="clinic-hyd-secunderabad.html" style="color:var(--accent); text-decoration:none; font-weight:600">Secunderabad</a><p style="font-size:13px; color:var(--muted); margin-top:4px">MG Road, Hyderabad</p></div>
+  </div>
+
+  <div style="margin-bottom:8px; font-size:13px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px">Chennai</div>
+  <div class="grid" style="margin-bottom:18px">
+    <div class="card"><a href="clinic-chn-adyar.html" style="color:var(--accent); text-decoration:none; font-weight:600">Adyar</a><p style="font-size:13px; color:var(--muted); margin-top:4px">LB Road, Chennai</p></div>
+    <div class="card"><a href="clinic-chn-annanagar.html" style="color:var(--accent); text-decoration:none; font-weight:600">Anna Nagar</a><p style="font-size:13px; color:var(--muted); margin-top:4px">2nd Avenue, Chennai</p></div>
+    <div class="card"><a href="clinic-chn-velachery.html" style="color:var(--accent); text-decoration:none; font-weight:600">Velachery</a><p style="font-size:13px; color:var(--muted); margin-top:4px">Velachery Main Road, Chennai</p></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Download Patient Guide</h3>
+      <p style="color:var(--muted); font-size:14px">Free PDF — what to expect at your first consultation. Gated behind a short form.</p>
+      <a href="guide.html" class="btn btn-outline" style="margin-top:12px; display:inline-block">Get the guide →</a>
+    </div>
+    <div class="card">
+      <h3>Latest blog post</h3>
+      <p style="color:var(--muted); font-size:14px">"5 Signs Your Knee Pain Needs a Specialist" — scroll depth tracked at 25/50/75/90%.</p>
+      <a href="blog.html" class="btn btn-outline" style="margin-top:12px; display:inline-block">Read article →</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="tracking.js"></script>
+</body>
+</html>

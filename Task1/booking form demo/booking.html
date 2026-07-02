@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Book a Consultation — OrthoNow</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .steps{display:flex; align-items:center; justify-content:center; margin:24px 0 8px}
+  .step-dot{
+    width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:var(--panel); border:2px solid var(--border); color:var(--muted); font-size:13px; font-weight:700;
+    flex-shrink:0;
+  }
+  .step-dot.active{background:var(--accent); border-color:var(--accent); color:#fff}
+  .step-dot.done{background:var(--accent-dark); border-color:var(--accent-dark); color:#fff}
+  .step-line{width:40px; height:2px; background:var(--border)}
+  .step-line.done{background:var(--accent-dark)}
+  .form-card{max-width:440px; margin:0 auto}
+  .actions{display:flex; justify-content:space-between; margin-top:24px}
+  .btn-ghost{background:transparent; color:var(--muted); border:1px solid var(--border); padding:11px 20px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600}
+  .confirm{text-align:center}
+  .confirm .check{font-size:42px; color:var(--accent)}
+  .bid{font-family:monospace; font-size:13px; color:var(--muted); margin-top:6px}
+</style>
+</head>
+<body data-page-type="booking_form">
+
+<nav class="nav">
+  <a class="brand" href="index.html">OrthoNow</a>
+  <div><a href="index.html">Home</a></div>
+</nav>
+
+<div class="container">
+  <div class="hero" style="padding:10px 0 0">
+    <h1 style="font-size:22px">Book a Consultation</h1>
+    <p>3-step appointment booking — every step push goes to <code>window.dataLayer</code> exactly as it would in production.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step-dot" id="dot-1">1</div>
+    <div class="step-line" id="line-1"></div>
+    <div class="step-dot" id="dot-2">2</div>
+    <div class="step-line" id="line-2"></div>
+    <div class="step-dot" id="dot-3">✓</div>
+  </div>
+
+  <div class="card form-card">
+
+    <!-- ============================================================
+         STEP 1 — Clinic + specialty selection
+         dataLayer event: booking_step_complete, step_number: 1
+         ============================================================ -->
+    <div class="step" id="step-1">
+      <label>Clinic location</label>
+      <select id="clinic">
+        <option value="">Select a clinic</option>
+        <option value="Bengaluru - Indiranagar">Bengaluru - Indiranagar</option>
+        <option value="Bengaluru - Whitefield">Bengaluru - Whitefield</option>
+        <option value="Hyderabad - Banjara Hills">Hyderabad - Banjara Hills</option>
+        <option value="Hyderabad - Gachibowli">Hyderabad - Gachibowli</option>
+        <option value="Chennai - Adyar">Chennai - Adyar</option>
+        <option value="Chennai - Anna Nagar">Chennai - Anna Nagar</option>
+      </select>
+      <div class="err" id="err-clinic">Please select a clinic.</div>
+
+      <label>Specialty</label>
+      <select id="specialty">
+        <option value="">Select a specialty</option>
+        <option value="Sports Medicine">Sports Medicine</option>
+        <option value="Joint Replacement">Joint Replacement</option>
+        <option value="Spine Care">Spine Care</option>
+        <option value="Pediatric Orthopaedics">Pediatric Orthopaedics</option>
+      </select>
+      <div class="err" id="err-specialty">Please select a specialty.</div>
+
+      <div class="actions">
+        <span></span>
+        <button class="btn btn-primary" onclick="completeStep1()">Continue</button>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         STEP 2 — Contact details
+         dataLayer event: booking_step_complete, step_number: 2
+         ============================================================ -->
+    <div class="step" id="step-2" style="display:none">
+      <label>Full name</label>
+      <input id="name" type="text" placeholder="Patient name">
+      <div class="err" id="err-name">Please enter your name.</div>
+
+      <label>Phone number</label>
+      <input id="phone" type="tel" placeholder="+91 9XXXXXXXXX">
+      <div class="err" id="err-phone">Please enter a valid phone number.</div>
+
+      <label>Preferred date</label>
+      <input id="date" type="date">
+      <div class="err" id="err-date">Please choose a preferred date.</div>
+
+      <div class="actions">
+        <button class="btn-ghost" onclick="goToStep(1)">Back</button>
+        <button class="btn btn-primary" onclick="completeStep2()">Continue</button>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         STEP 3 — Review + confirm
+         dataLayer event: booking_confirmed (NOT booking_step_complete
+         — see README for why the conversion gets its own event name)
+         ============================================================ -->
+    <div class="step" id="step-3" style="display:none">
+      <p style="font-size:14px; font-weight:600; margin-bottom:4px">Review your booking</p>
+      <div id="review" style="font-size:13px; color:var(--muted); line-height:1.9"></div>
+      <div class="actions">
+        <button class="btn-ghost" onclick="goToStep(2)">Back</button>
+        <button class="btn btn-primary" onclick="confirmBooking()">Confirm Booking</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Confirmation (no further dataLayer event here;
+         booking_confirmed already fired on the button click) -->
+    <div class="step" id="step-4" style="display:none">
+      <div class="confirm">
+        <div class="check">✓</div>
+        <h2 style="margin-bottom:4px">Booking confirmed</h2>
+        <p style="color:var(--muted); font-size:13px">Our team will call to confirm your slot.</p>
+        <div class="bid" id="booking-id-display"></div>
+        <button class="btn btn-primary" style="margin-top:18px" onclick="resetForm()">Book another</button>
+      </div>
+    </div>
+
+  </div>
+
+
+</div>
+
+<script>
+/* ============================================================
+   STEP NAVIGATION
+   ============================================================ */
+function goToStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('step-' + i).style.display = (i === n) ? 'block' : 'none';
+  }
+  updateDots(n);
+}
+
+function updateDots(n) {
+  ['dot-1','line-1','dot-2','line-2','dot-3'].forEach(id => {
+    document.getElementById(id).classList.remove('active','done');
+  });
+  if (n === 1) document.getElementById('dot-1').classList.add('active');
+  if (n === 2) {
+    document.getElementById('dot-1').classList.add('done');
+    document.getElementById('line-1').classList.add('done');
+    document.getElementById('dot-2').classList.add('active');
+  }
+  if (n >= 3) {
+    document.getElementById('dot-1').classList.add('done');
+    document.getElementById('line-1').classList.add('done');
+    document.getElementById('dot-2').classList.add('done');
+    document.getElementById('line-2').classList.add('done');
+    document.getElementById('dot-3').classList.add('active');
+  }
+}
+
+/* ============================================================
+   VALIDATION — runs before every push. A push never fires on a
+   failed validation attempt, so funnel numbers in GA4 reflect
+   genuine step completions only.
+   ============================================================ */
+function showError(id, show) { document.getElementById(id).style.display = show ? 'block' : 'none'; }
+function validatePhone(value) { return /^[+]?[\d\s-]{8,15}$/.test(value.trim()); }
+
+/* ============================================================
+   STEP 1 -> STEP 2
+   GTM trigger: Custom Event "booking_step_complete" filtered on
+   {{DLV - step_number}} = 1
+   ============================================================ */
+function completeStep1() {
+  const clinic = document.getElementById('clinic').value;
+  const specialty = document.getElementById('specialty').value;
+
+  let valid = true;
+  if (!clinic) { showError('err-clinic', true); valid = false; } else showError('err-clinic', false);
+  if (!specialty) { showError('err-specialty', true); valid = false; } else showError('err-specialty', false);
+  if (!valid) return;
+
+  pushEvent({
+    event: 'booking_step_complete',
+    step_number: 1,
+    step_name: 'location_specialty_selected',
+    clinic_location: clinic,
+    specialty: specialty
+  });
+
+  goToStep(2);
+}
+
+/* ============================================================
+   STEP 2 -> STEP 3
+   GTM trigger: Custom Event "booking_step_complete" filtered on
+   {{DLV - step_number}} = 2
+   ============================================================ */
+function completeStep2() {
+  const name = document.getElementById('name').value;
+  const phone = document.getElementById('phone').value;
+  const date = document.getElementById('date').value;
+
+  let valid = true;
+  if (!name.trim()) { showError('err-name', true); valid = false; } else showError('err-name', false);
+  if (!validatePhone(phone)) { showError('err-phone', true); valid = false; } else showError('err-phone', false);
+  if (!date) { showError('err-date', true); valid = false; } else showError('err-date', false);
+  if (!valid) return;
+
+  pushEvent({
+    event: 'booking_step_complete',
+    step_number: 2,
+    step_name: 'contact_details_entered',
+    clinic_location: document.getElementById('clinic').value,
+    specialty: document.getElementById('specialty').value,
+    preferred_date: date
+    // name and phone deliberately excluded — no PII in dataLayer
+  });
+
+  document.getElementById('review').innerHTML = `
+    Clinic: ${document.getElementById('clinic').value}<br>
+    Specialty: ${document.getElementById('specialty').value}<br>
+    Preferred date: ${date}<br>
+    Name: ${name}<br>
+    Phone: ${phone}
+  `;
+
+  goToStep(3);
+}
+
+/* ============================================================
+   STEP 3 -> CONFIRMED
+   GTM trigger: Custom Event "booking_confirmed" (own event name,
+   not step_number 3 — see README)
+   ============================================================ */
+function confirmBooking() {
+  const bookingId = 'ON-' + Date.now().toString().slice(-8);
+
+  pushEvent({
+    event: 'booking_confirmed',
+    step_number: 3,
+    step_name: 'booking_confirmed',
+    booking_id: bookingId,
+    clinic_location: document.getElementById('clinic').value,
+    specialty: document.getElementById('specialty').value,
+    preferred_date: document.getElementById('date').value,
+    value: 1
+  });
+
+  document.getElementById('booking-id-display').textContent = 'Booking ID: ' + bookingId;
+  goToStep(4);
+}
+
+function resetForm() {
+  document.getElementById('clinic').selectedIndex = 0;
+  document.getElementById('specialty').selectedIndex = 0;
+  document.getElementById('name').value = '';
+  document.getElementById('phone').value = '';
+  document.getElementById('date').value = '';
+  goToStep(1);
+}
+
+/* ============================================================
+   PAGE VIEW EVENT — fired once on load. Covers the case where
+   this lived inside a SPA route with no real navigation.
+   ============================================================ */
+window.addEventListener('DOMContentLoaded', function () {
+  pushEvent({ event: 'view_booking_form', form_name: 'orthonow_consultation_booking' });
+  goToStep(1);
+});
+</script>
+<script src="tracking.js"></script>
+</body>
+</html>

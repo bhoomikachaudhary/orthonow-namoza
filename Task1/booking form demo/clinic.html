@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Clinic — OrthoNow</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<!-- This single template powers all 9 clinic pages via ?id= query param.
+     In production these would be 9 separate WordPress pages, each with
+     the clinic's identity baked into the template via ACF/CPT fields.
+     The tracking mechanism is identical either way: data-* attributes
+     on <body> are set before tracking.js DOMContentLoaded fires, so
+     view_clinic_page always has the correct clinic_id and city attached. -->
+<body data-page-type="clinic_location">
+
+<nav class="nav">
+  <a class="brand" href="index.html">OrthoNow</a>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="blog.html">Blog</a>
+    <a href="booking.html">Book Now</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="card">
+    <h1 id="clinic-name" style="margin-top:0">Loading clinic…</h1>
+    <p id="clinic-address" style="color:var(--muted); margin-bottom:16px"></p>
+
+    <!-- CALL NOW — clinic page instance.
+         clinic_id is filled in by JS below before tracking.js runs,
+         so the click_call_now push includes which specific clinic was
+         called — critical for attributing calls to locations in GA4. -->
+    <a href="tel:+919999999999"
+       id="clinic-call-btn"
+       class="btn btn-primary"
+       data-track="call_now"
+       data-page-type="clinic_location"
+       data-phone="+919999999999">
+      📞 Call this clinic
+    </a>
+    &nbsp;
+    <a href="booking.html" class="btn btn-outline">Book a consultation</a>
+  </div>
+
+  <div class="card">
+    <h3>Specialties at this location</h3>
+    <p style="color:var(--muted); font-size:14px">
+      Sports Medicine &nbsp;·&nbsp; Joint Replacement &nbsp;·&nbsp;
+      Spine Care &nbsp;·&nbsp; Pediatric Orthopaedics
+    </p>
+  </div>
+
+  <!-- All 9 clinic links so every page is navigable from every other -->
+  <div class="card">
+    <h3 style="margin-bottom:12px">All OrthoNow locations</h3>
+    <div id="clinic-links" style="font-size:14px; line-height:2.2"></div>
+  </div>
+</div>
+
+<script>
+  // All 9 clinics the brief specifies:
+  // 3 Bengaluru · 3 Hyderabad · 3 Chennai
+  const CLINICS = {
+    'blr-indiranagar':  { name: 'Bengaluru – Indiranagar',    city: 'Bengaluru',  address: '12th Main Road, Indiranagar, Bengaluru 560038' },
+    'blr-whitefield':   { name: 'Bengaluru – Whitefield',     city: 'Bengaluru',  address: 'ITPL Main Road, Whitefield, Bengaluru 560066' },
+    'blr-jayanagar':    { name: 'Bengaluru – Jayanagar',      city: 'Bengaluru',  address: '4th Block, Jayanagar, Bengaluru 560011' },
+    'hyd-banjarahills': { name: 'Hyderabad – Banjara Hills',  city: 'Hyderabad',  address: 'Road No. 12, Banjara Hills, Hyderabad 500034' },
+    'hyd-gachibowli':   { name: 'Hyderabad – Gachibowli',     city: 'Hyderabad',  address: 'Financial District, Gachibowli, Hyderabad 500032' },
+    'hyd-secunderabad': { name: 'Hyderabad – Secunderabad',   city: 'Hyderabad',  address: 'MG Road, Secunderabad, Hyderabad 500003' },
+    'chn-adyar':        { name: 'Chennai – Adyar',            city: 'Chennai',    address: 'LB Road, Adyar, Chennai 600020' },
+    'chn-annanagar':    { name: 'Chennai – Anna Nagar',       city: 'Chennai',    address: '2nd Avenue, Anna Nagar, Chennai 600040' },
+    'chn-velachery':    { name: 'Chennai – Velachery',        city: 'Chennai',    address: 'Velachery Main Road, Velachery, Chennai 600042' }
+  };
+
+  // Set current clinic from ?id= param
+  const params = new URLSearchParams(window.location.search);
+  const currentId = params.get('id') || 'blr-indiranagar';
+  const clinic = CLINICS[currentId] || CLINICS['blr-indiranagar'];
+
+  // Write data attributes BEFORE tracking.js DOMContentLoaded fires
+  document.body.dataset.clinicId   = currentId;
+  document.body.dataset.clinicName = clinic.name;
+  document.body.dataset.city       = clinic.city;
+
+  document.getElementById('clinic-name').textContent    = clinic.name;
+  document.getElementById('clinic-address').textContent = clinic.address;
+  document.getElementById('clinic-call-btn').dataset.clinicId = currentId;
+
+  // Render all 9 clinic links
+  const linksEl = document.getElementById('clinic-links');
+  Object.entries(CLINICS).forEach(([id, c]) => {
+    const a = document.createElement('a');
+    a.href = 'clinic.html?id=' + id;
+    a.textContent = c.name;
+    a.style.cssText = 'display:block; color:var(--accent); text-decoration:none;' +
+      (id === currentId ? 'font-weight:700;' : '');
+    linksEl.appendChild(a);
+  });
+</script>
+<script src="tracking.js"></script>
+</body>
+</html>

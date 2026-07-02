@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Patient Guide — OrthoNow</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page-type="patient_guide">
+
+<nav class="nav">
+  <a class="brand" href="index.html">OrthoNow</a>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="booking.html">Book Now</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero" style="padding:20px">
+    <h1>Free Patient Guide</h1>
+    <p>What to expect at your first orthopaedic consultation — a short PDF guide. Enter your details to download.</p>
+  </div>
+
+  <div class="card" id="gate-form-card" style="max-width:420px; margin:0 auto">
+    <label>Full name</label>
+    <input id="g-name" type="text" placeholder="Your name">
+    <div class="err" id="g-err-name">Please enter your name.</div>
+
+    <label>Phone number</label>
+    <input id="g-phone" type="tel" placeholder="+91 9XXXXXXXXX">
+    <div class="err" id="g-err-phone">Please enter a valid phone number.</div>
+
+    <button class="btn btn-primary" style="margin-top:18px; width:100%" onclick="submitGate()">Download Guide (PDF)</button>
+  </div>
+
+  <!-- Shown after successful submission -->
+  <div class="card" id="gate-success-card" style="max-width:420px; margin:0 auto; display:none; text-align:center">
+    <h3>Thanks — your download is starting</h3>
+    <p style="color:var(--muted); font-size:14px">(Demo: no real PDF is attached — in production this link would point to the actual file.)</p>
+    <a href="#" class="btn btn-outline" onclick="return false;">patient-guide.pdf</a>
+  </div>
+</div>
+
+<script>
+  /* ============================================================
+     GATED DOWNLOAD — KEY DECISION
+     The brief lists this as a single interaction ("Download Patient
+     Guide"), but it's actually a FORM SUBMIT event, not a file-click
+     event. GTM's built-in "File Download" auto-event trigger fires
+     on any click of a link pointing to a PDF — but that would also
+     fire for someone who right-clicks "copy link" and pastes it
+     elsewhere, or for repeat clicks by the same gated user, neither
+     of which represents a new lead. The meaningful, once-per-lead
+     signal is the form validating successfully, so that's what's
+     pushed to dataLayer — not a click on the (demo, fake) PDF link
+     below it.
+     ============================================================ */
+  function showErr(id, show) { document.getElementById(id).style.display = show ? 'block' : 'none'; }
+  function validatePhone(v) { return /^[+]?[\d\s-]{8,15}$/.test(v.trim()); }
+
+  function submitGate() {
+    const name = document.getElementById('g-name').value;
+    const phone = document.getElementById('g-phone').value;
+
+    let valid = true;
+    if (!name.trim()) { showErr('g-err-name', true); valid = false; } else showErr('g-err-name', false);
+    if (!validatePhone(phone)) { showErr('g-err-phone', true); valid = false; } else showErr('g-err-phone', false);
+    if (!valid) return; // no push on failed validation
+
+    pushEvent({
+      event: 'download_patient_guide_form_submit',
+      lead_source: 'patient_guide',
+      name_provided: !!name.trim(),   // booleans only — no PII in dataLayer
+      phone_provided: validatePhone(phone)
+    });
+
+    document.getElementById('gate-form-card').style.display = 'none';
+    document.getElementById('gate-success-card').style.display = 'block';
+  }
+</script>
+<script src="tracking.js"></script>
+</body>
+</html>
