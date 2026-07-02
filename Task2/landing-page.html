@@ -6,21 +6,15 @@
 <title>Book an Orthopaedic Consultation in Bengaluru | OrthoNow</title>
 <meta name="description" content="Get an expert orthopaedic opinion on your knee or back pain. Same-week appointments across Bengaluru. 9 clinics, 40,000+ patients treated.">
 
+<!-- canonical tells search engines this is the authoritative URL — fixes SEO -->
+<link rel="canonical" href="https://yourusername.github.io/orthonow-namoza/task-02/landing-page.html">
+
 <!-- ============================================================
-     PERFORMANCE NOTES (read this before touching anything below)
-     - Zero external requests: no Google Fonts, no CDN, no images
-       loaded over the network. System font stack only. The single
-       trust-badge "photo" is a CSS/SVG avatar, not a JPEG — this
-       alone removes the two most common PageSpeed killers (web
-       font loading + unoptimized hero images).
-     - All CSS is inlined in <head>, so there's no render-blocking
-       external stylesheet request.
-     - JS is a single small inline block placed at the end of
-       <body>, so it never blocks first paint and the DOM it
-       touches already exists by the time it runs.
-     - No layout-shifting elements: the form's success state swaps
-       via visibility, not by injecting new elements that change
-       page height, so CLS stays at ~0.
+     PERFORMANCE NOTES
+     - Zero external requests: no Google Fonts, no CDN, no images.
+     - All CSS inlined in <head> — no render-blocking stylesheet.
+     - JS at end of <body> — never blocks first paint.
+     - No layout shift: success state swaps visibility, not DOM.
      ============================================================ -->
 
 <style>
@@ -43,10 +37,10 @@
     -webkit-font-smoothing:antialiased;
   }
 
-  /* ---- layout shell ---- */
+  /* ---- layout ---- */
   .wrap{max-width:480px; margin:0 auto; padding:0 20px 40px}
 
-  /* ---- top bar: minimal, no logo image (text wordmark = zero requests) ---- */
+  /* ---- top bar ---- */
   .topbar{
     display:flex; align-items:center; justify-content:center;
     padding:14px 0; font-weight:700; font-size:17px; color:var(--accent-dark);
@@ -63,12 +57,14 @@
     font-size:15.5px; color:var(--muted); max-width:380px; margin:0 auto;
   }
 
-  /* ---- trust strip: real specificity, not vague reassurance ---- */
+  /* ---- trust strip ---- */
   .trust{
     display:flex; align-items:center; justify-content:center; gap:10px;
     background:var(--panel); border:1px solid var(--border); border-radius:10px;
     padding:12px 14px; margin:18px 0; font-size:13.5px; color:var(--muted);
   }
+  /* Accessibility fix: stars use aria-hidden so screen readers skip them
+     and read the text alternative "Rated 4.8 out of 5" instead */
   .trust .stars{color:#e3a008; font-size:14px; letter-spacing:1px; flex-shrink:0}
   .trust strong{color:var(--text)}
 
@@ -77,49 +73,61 @@
     background:var(--panel); border:1px solid var(--border); border-radius:14px;
     padding:22px 20px 20px; box-shadow:0 1px 3px rgba(15,30,25,0.04);
   }
-  .card h2{font-size:16px; font-weight:700; margin-bottom:14px}
+  .card h2{font-size:16px; font-weight:700; margin-bottom:14px; color:var(--text)}
 
-  label{display:block; font-size:13px; font-weight:600; color:var(--muted); margin:0 0 6px}
+  /* Accessibility fix: label color contrast raised from #5d6b78 to #444e58
+     so it passes WCAG AA contrast ratio (4.5:1) against white background */
+  label{
+    display:block; font-size:13px; font-weight:600;
+    color:#444e58; margin:0 0 6px;
+  }
   input{
-    width:100%; padding:13px 14px; font-size:16px; /* 16px prevents iOS auto-zoom on focus */
-    border:1.5px solid var(--border); border-radius:9px; background:#fff; color:var(--text);
-    margin-bottom:6px; -webkit-appearance:none; appearance:none;
+    width:100%; padding:13px 14px; font-size:16px;
+    border:1.5px solid var(--border); border-radius:9px;
+    background:#fff; color:var(--text); margin-bottom:6px;
+    -webkit-appearance:none; appearance:none;
   }
-  input:focus{outline:none; border-color:var(--accent)}
+  input:focus{
+    outline:3px solid var(--accent); /* visible focus ring for keyboard nav */
+    outline-offset:1px; border-color:var(--accent);
+  }
   .field-err{
-    display:none; color:#c23a3a; font-size:12.5px; margin:4px 0 10px;
+    display:none; color:#b91c1c; font-size:12.5px; margin:4px 0 10px;
+    font-weight:600; /* darker red — passes contrast on white */
   }
 
+  /* Accessibility fix: button contrast checked — white on #0e7c66 passes AA */
   button.cta{
     width:100%; padding:15px; font-size:16px; font-weight:700; color:#fff;
     background:var(--accent); border:none; border-radius:10px; cursor:pointer;
     transition:background 0.15s ease;
   }
-  button.cta:active{background:var(--accent-dark)}
+  button.cta:hover{background:var(--accent-dark)}
+  button.cta:focus{outline:3px solid var(--accent-dark); outline-offset:2px}
 
   .call-alt{
-    display:block; text-align:center; margin-top:14px; color:var(--accent);
-    font-size:14px; font-weight:600; text-decoration:none;
+    display:block; text-align:center; margin-top:14px; color:var(--accent-dark);
+    font-size:14px; font-weight:600; text-decoration:underline;
   }
+  .call-alt:focus{outline:3px solid var(--accent); outline-offset:2px}
+
   .microcopy{
     text-align:center; font-size:12px; color:var(--muted); margin-top:12px;
   }
 
-  /* ---- success state: same card, content swapped, no reflow of the page below ---- */
+  /* ---- success state ---- */
   .success{display:none; text-align:center; padding:10px 0}
   .success .check{
     width:52px; height:52px; border-radius:50%; background:var(--accent);
     display:flex; align-items:center; justify-content:center; margin:0 auto 14px;
   }
-  .success h2{font-size:18px; margin-bottom:6px}
+  .success h2{font-size:18px; margin-bottom:6px; color:var(--text)}
   .success p{font-size:14px; color:var(--muted)}
 
-  /* ---- secondary trust row under the form ---- */
   .clinics{
     text-align:center; font-size:12.5px; color:var(--muted); margin-top:18px;
   }
 
-  /* ---- mobile-first: this IS the base layout. Desktop just adds breathing room ---- */
   @media (min-width:600px){
     .wrap{padding-top:20px}
     .hero h1{font-size:32px}
@@ -129,8 +137,10 @@
 </head>
 <body>
 
-<div class="topbar">OrthoNow</div>
+<!-- role="banner" is the landmark for screen readers — accessibility fix -->
+<header role="banner" class="topbar">OrthoNow</header>
 
+<main role="main">
 <div class="wrap">
 
   <div class="hero">
@@ -138,11 +148,12 @@
     <p>Book a consultation at OrthoNow — same-week appointments across Bengaluru.</p>
   </div>
 
-  <!-- Trust element: specific numbers beat vague claims. No external image,
-       avatar is a pure-CSS circle so it costs zero bytes over the network. -->
-  <div class="trust">
-    <span class="stars">★★★★★</span>
-    <span><strong>4.8/5</strong> from 2,300+ patients · 9 clinics in Bengaluru, Hyderabad &amp; Chennai</span>
+  <!-- aria-label gives screen readers context for the trust strip -->
+  <div class="trust" role="region" aria-label="Patient ratings">
+    <!-- aria-hidden hides the star symbols from screen readers;
+         the text "Rated 4.8 out of 5" conveys the same information -->
+    <span class="stars" aria-hidden="true">★★★★★</span>
+    <span>Rated <strong>4.8 out of 5</strong> from 2,300+ patients &nbsp;·&nbsp; 9 clinics across Bengaluru, Hyderabad &amp; Chennai</span>
   </div>
 
   <div class="card">
@@ -151,38 +162,55 @@
     <div id="form-state">
       <h2>Book your consultation</h2>
 
-      <form id="consult-form" novalidate>
+      <!-- aria-describedby links the form to a description for screen readers -->
+      <form id="consult-form" novalidate aria-label="Consultation booking form">
+
         <label for="f-name">Full name</label>
-        <input id="f-name" name="name" type="text" autocomplete="name" placeholder="Your name">
-        <div class="field-err" id="err-name">Please enter your name.</div>
+        <input
+          id="f-name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          placeholder="Your name"
+          aria-required="true"
+          aria-describedby="err-name">
+        <!-- role="alert" makes screen readers announce errors immediately on show -->
+        <div class="field-err" id="err-name" role="alert">Please enter your name.</div>
 
         <label for="f-phone">Phone number</label>
-        <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+91 9XXXXXXXXX">
-        <div class="field-err" id="err-phone">Please enter a valid 10-digit phone number.</div>
+        <input
+          id="f-phone"
+          name="phone"
+          type="tel"
+          inputmode="numeric"
+          autocomplete="tel"
+          placeholder="+91 9XXXXXXXXX"
+          aria-required="true"
+          aria-describedby="err-phone">
+        <div class="field-err" id="err-phone" role="alert">Please enter a valid 10-digit phone number.</div>
 
         <button type="submit" class="cta">Book My Consultation</button>
         <p class="microcopy">A specialist will call you within 2 hours to confirm your slot.</p>
       </form>
 
       <!-- CALL NOW — landing page instance.
-           Brief explicitly requires Call Now on the landing page.
-           Placed below the primary form CTA as a secondary action —
-           users who prefer to call rather than fill a form still
-           convert. data-page-type="landing_page" distinguishes these
-           calls from homepage/clinic-page calls in GA4. -->
+           Brief requires Call Now on the landing page.
+           aria-label gives screen readers a full readable label. -->
       <a href="tel:+919999999999"
          class="call-alt"
          data-track="call_now"
          data-page-type="landing_page"
-         data-phone="+919999999999">
-        &#128222; Prefer to call? &nbsp;+91 99999 99999
+         data-phone="+919999999999"
+         aria-label="Call OrthoNow at +91 99999 99999">
+        📞 Prefer to call? &nbsp;+91 99999 99999
       </a>
     </div>
 
-    <!-- SUCCESS STATE (hidden by default, no page reload — just a visibility swap) -->
-    <div id="success-state" class="success">
-      <div class="check">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <!-- SUCCESS STATE -->
+    <!-- role="status" announces to screen readers that the form was submitted -->
+    <div id="success-state" class="success" role="status" aria-live="polite">
+      <div class="check" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
@@ -195,12 +223,11 @@
   <p class="clinics">No spam. Your number is only used to confirm your appointment.</p>
 
 </div>
+</main>
 
 <script>
 /* ============================================================
-   GTM DATALAYER — initialized defensively in case the GTM
-   container snippet (which would normally sit right after the
-   opening <body> tag in production) hasn't loaded yet.
+   GTM DATALAYER INITIALIZATION
    ============================================================ */
 window.dataLayer = window.dataLayer || [];
 
@@ -210,17 +237,20 @@ window.dataLayer = window.dataLayer || [];
   var successState = document.getElementById('success-state');
 
   function showError(id, show) {
-    document.getElementById(id).style.display = show ? 'block' : 'none';
+    var el = document.getElementById(id);
+    el.style.display = show ? 'block' : 'none';
+    // aria-invalid on the input field signals error state to screen readers
+    var inputId = id === 'err-name' ? 'f-name' : 'f-phone';
+    document.getElementById(inputId).setAttribute('aria-invalid', show ? 'true' : 'false');
   }
 
   function validatePhone(value) {
-    // Loose validator: 10-digit Indian mobile, optional +91 / leading 0
     var digits = value.replace(/\D/g, '');
     return digits.length === 10 || (digits.length === 12 && digits.startsWith('91'));
   }
 
   form.addEventListener('submit', function (e) {
-    e.preventDefault(); // no page reload, ever — this is a single-page form
+    e.preventDefault();
 
     var name = document.getElementById('f-name').value.trim();
     var phone = document.getElementById('f-phone').value.trim();
@@ -231,31 +261,23 @@ window.dataLayer = window.dataLayer || [];
     if (!valid) return;
 
     /* ============================================================
-       THE EVENT THIS TASK IS ACTUALLY ABOUT.
-       Fires once, on successful submit only — never on page load,
-       never on a failed validation attempt. This is the dataLayer
-       push a GTM trigger (Custom Event, name = "consultation_form_submitted")
-       would listen for to fire a GA4 conversion tag and, per Task 03,
-       trigger the HubSpot + WhatsApp + Google Ads chain server-side.
-
-       PII note: name and phone are intentionally NOT included in this
-       push — same reasoning as Task 01. Analytics tools don't need the
-       raw PII to report on conversions; the CRM submission (a separate,
-       non-dataLayer network call) is where that data actually goes.
+       DATALAYER PUSH — fires on successful submit only.
+       Never on page load, never on failed validation.
+       GTM trigger: Custom Event, name = "consultation_form_submitted"
+       No PII in the push — name/phone go to CRM via server-side POST.
        ============================================================ */
     window.dataLayer.push({
       event: 'consultation_form_submitted',
       form_name: 'orthonow_landing_consultation',
       lead_source: 'google_ads_consultation_landing',
       page_path: window.location.pathname,
-      name_provided: !!name,
-      phone_provided: validatePhone(phone)
+      name_provided: true,
+      phone_provided: true
     });
 
-    // Demo-only: log so it's visible without DevTools open mid-recording.
-    console.log('%cdataLayer.push', 'color:#0e7c66;font-weight:bold', window.dataLayer[window.dataLayer.length - 1]);
+    console.log('%cdataLayer.push', 'color:#0e7c66;font-weight:bold',
+      window.dataLayer[window.dataLayer.length - 1]);
 
-    // Swap states — no new elements inserted, no reflow, no reload.
     formState.style.display = 'none';
     successState.style.display = 'block';
   });
